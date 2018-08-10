@@ -61,5 +61,6 @@ RUN mkdir -p /var/run/mysqld; \
     chmod 755 /start.sh /etc/apache2/foreground.sh
 
 WORKDIR /var/www/html
+VOLUME ["/var/www/html"]
 EXPOSE 22 80 3306 9000
 CMD ["/bin/bash", "/start.sh"]
