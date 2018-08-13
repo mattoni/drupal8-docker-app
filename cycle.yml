@@ -1,1 +1,113 @@
-FROM docker pull ricardoamaro/drupal8
+# This is the version of the Cycle Stack Spec (currently only 1.0).
+version: "1.0"
+
+# (optional) a description to be used for your own internal purposes.
+description: "An All In One Drupal Container"
+
+# Here is where we list our containers. You can have as many as you want.
+containers: 
+
+  # The key for this container (used in this file only). 
+  # Usually the same as the hostname.
+  drupal: 
+    
+    # Will appear in the portal under this name - can be anything.
+    name: Drupal Website
+
+    # The image describes where to import the image from, 
+    # or what sources to use to build it on Cycle.    
+    image: 
+
+      # The name to give the image when it is imported. 
+      # This is for your purposes only.
+      name: Drupal
+
+      # When set to true, Cycle will preemptively download (and keep) 
+      # the image on all applicable (using tags) servers.
+      # This allows for near instant start time of the container, 
+      # at the cost of drive space.
+      preload: false
+
+      # The source describes where to get the prebuilt image, 
+      # or where to find the Dockerfile.
+      source: 
+
+        # If building from source on Cycle, use this to point to the path
+        # where the Dockerfile is within this repo. Omit the Dockerfile
+        # at the end.
+        docker_file:
+          path: /
+    
+    # Config settings - See above for a link to the detailed config breakdown.
+    config: 
+
+      # (optional) The deployment section describes the number of instances 
+      # and what servers the container can be deployed to.
+      deployment: 
+
+        # The number of instances Cycle should start
+        instances: 1
+
+      # (optional) The network section describes 
+      # how the container communicates within Cycle,
+      # and with the public internet.
+      network: 
+        # The hostname is the name the container uses to identify itself 
+        # on the private network.
+        # Other containers in the same environment can use this name to connect to it.
+        hostname: drupal-site
+
+        # An array of ports the container exposes.
+        ports: 
+          - "80:80"
+
+        # How the container communicates with the internet. Options are:
+        # disable - No public internet access
+        # egress-only - Allow outbound connections, but not inbound
+        # enable - Full internet access
+        public: enable
+
+
+        # Cycle can monitor and attempt to restart your container 
+        # if it detects the process has died.
+        monitor: 
+          
+          # Should Cycle attempt to restart the container?
+          auto_restart: true
+
+          # How many times should it attempt?
+          max_restarts: 3
+
+          # Number of seconds to wait before attempting next restart.
+          restart_delay_secs: 10
+
+    # An array of volume configurations.
+    # You must have a configuration for each volume described in your image.
+    volumes: 
+
+      - 
+        # The path to map the volume to within the container.
+        destination: /var/www/html
+
+        # The type of volume. Currently, only "local" is supported.
+        # In the future, other options such as SAN will be supported.
+        local: 
+          
+          # The size the drive should be. Uses the same units as RAM under resources.
+          max_size: 2G
+
+        # Whether or not the volume is readonly.
+        read_only: false
+
+        # Remote access refers to the ability to SFTP into the drive.
+        remote_access: 
+        
+          # Enable remote access?
+          enable: true
+
+          # (optional) Password config for general connections
+          password:
+
+            # Raw password - will need to enter this literally as the password
+            # in your SFTP application.
+            raw: secretpassword
